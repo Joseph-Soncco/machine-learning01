@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+  <style>
+    body{ background-color: antiquewhite;}
+  </style>
+
+  <!-- PS5 Gestión dinámica/rápida de JS -->  
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+
+  <!-- ML5 = Machine Learning-->
+  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+  <script>
+    //Objetos
+    let handPose
+    let video
+    let hands = []
+
+    function preload() {
+      handPose = ml5.handPose()
+    }
+
+    function setup() {
+      createCanvas(640, 480) //Low Quality
+      //background(255)
+
+      //Capturar video
+      video = createCapture(VIDEO)
+      video.size(640, 480)
+      video.hide()
+
+      //Iniciamos la deteccion desde la camara
+      handPose.detectStart(video, gotHands)
+    }
+
+    function draw(){
+      //El video capturado sera mostrado en el lienzo (canvas)
+      image(video,0,0, width, height)
+
+      //Renderizar/pintar/dibujar la ubicacion de cada dedo
+      for (let i = 0; i < hands.length; i++) {
+        //Mano identificada
+        let hand = hands[i]
+
+        //Identificar los dedos de esa mano
+        for(let j = 0; j < hand.keypoints.length; j++){
+         let keypoint = hand.keypoints[j]
+         fill(0, 255, 0) //RGB
+         noStroke()
+         circle(keypoint.x, keypoint.y, 15)
+        }
+      }
+    }
+
+    //Callbac functions
+    function gotHands(results){
+      //Guardar la salida de datos en el objeto
+      hands = results
+    }
+  </script>
+  
+</body>
+</html>

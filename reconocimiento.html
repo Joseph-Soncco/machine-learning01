@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <style>
+    body{
+      background-color: antiquewhite;
+    }
+  </style>
+
+
+  <div id="resultado"></div>
+
+
+  <!-- PS5 Gestión dinámica/rápida de JS -->  
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+
+  <!-- ML5 = Machine Learning-->
+  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+  <script>
+    //Objeto encarga de identificar la imagen
+    let classifier
+
+    //Referenciar al archivo físico
+    let img
+
+    //Muestran los resultados
+    let capa
+
+    //Función integrada en ML5
+    function preload(){
+      classifier = ml5.imageClassifier("MobileNet")//MobileNet = modelo ya entrenado
+      img = loadImage("images/animal02.jpg")
+      capa = document.querySelector("#resultado")
+    }
+
+    //Función de configuración
+    function setup(){
+      createCanvas(400,400) //Lienzo <canvas></canvas>
+      classifier.classify(img, goResult)
+      image(img,0,0,width,height)
+    }
+
+    //Retorna el resultado de la evalución del archivo de imagen
+    function goResult(results){
+      console.log(results)
+
+      //Confianza, valor real entre 0 - 1. Ejemplo: 0.98545445 => 98%
+      const confianza = (nf(results[0].confidence, 0, 2) * 100)
+      capa.innerHTML = results[0].label + " " + confianza + "%"
+
+    }
+  </script>
+
+</body>
+</html>

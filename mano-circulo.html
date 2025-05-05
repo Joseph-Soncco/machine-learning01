@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+
+
+  <!-- PS5 Gestión dinámica/rápida de JS -->  
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+
+  <!-- ML5 = Machine Learning-->
+  <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+  <script>
+    //Objetos
+    let handPose
+    let video
+    let hands = [] //No sabemos dónde estan las manos
+
+    //Precarga
+    function preload() {
+      handPose = ml5.handPose()
+    }
+
+    //Configuración
+    function setup() {
+      createCanvas(640, 480)
+
+      video = createCapture(VIDEO)
+      video.size(640, 480)
+      video.hide()
+      
+      //Iniciar detección (input, output)
+      handPose.detectStart(video, gotHands)
+    }
+
+    //Render
+    function draw() {
+      image(video, 0, 0, width, height)
+
+      //Verificando si detectamos una mano
+      if(hands.length > 0){
+        //Identificar la ubicación de los dedos
+        let finger = hands[0].index_finger_tip
+        let thumb = hands[0].thumb_tip
+
+        //console.log("Finger: ", finger, " - thumb: ", thumb)
+        //Dibujar un círculo
+        let centerX = (finger.x + thumb.x) / 2
+        let centerY = (finger.y + thumb.y) / 2
+
+        //Distancia entre los dedos (determinará el TAMAÑO)
+        let pinch = dist(finger.x, finger.y, thumb.x, thumb.y) //PL5
+
+        //Renderizamos el círculo
+        fill(255,0,0)     //Color relleno
+        stroke(255)        //Color borde
+        strokeWeight(2)
+        circle(centerX, centerY, pinch)
+      }
+    }
+
+    //Analisis iterativo
+    function gotHands(results){
+      hands = results
+    }
+  </script>
+</body>
+</html>
