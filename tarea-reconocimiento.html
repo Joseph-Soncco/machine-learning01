@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clasificador de animales</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+    <!-- PS5 Gestión dinámica/rápida de JS -->
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.min.js"></script>
+
+    <!-- ML5 = Machine Learning-->
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+    <div id="container">
+    <div id="canvasContainer"></div>
+    <div id="buttons">
+      <div class="btn-animal" onclick="cargarImagen('images/imagen03.jpg')">Tigre</div>
+      <div class="btn-animal" onclick="cargarImagen('images/imagen04.jpg')">Jaguar</div>
+      <div class="btn-animal" onclick="cargarImagen('images/imagen05.jpg')">Panda</div>
+    </div>
+  </div>
+
+  <div id="resultadoContainer">
+    <div id="resultadoLabel">Esperando...</div>
+    <div id="barra">
+      <div id="progreso">0%</div>
+    </div>
+  </div>
+    <script>
+        let classifier;
+        let img;
+        let canvas;
+
+        function preload() {
+            classifier = ml5.imageClassifier("MobileNet");
+        }
+
+        function setup() {
+            canvas = createCanvas(400, 400);
+            canvas.parent("canvasContainer");
+            background(255);
+        }
+
+        function cargarImagen(ruta) {
+            loadImage(ruta, (imagenCargada) => {
+                img = imagenCargada;
+                image(img, 0, 0, width, height);
+                classifier.classify(img, mostrarResultado);
+            });
+        }
+
+        function mostrarResultado(results) {
+            const resultado = results[0];
+            const confianza = (nf(resultado.confidence, 0, 2) * 100).toFixed(0);
+            const nombre = resultado.label.split(",")[0];
+
+            document.getElementById("resultadoLabel").textContent = nombre;
+            document.getElementById("progreso").style.width = confianza + "%"
+            document.getElementById("progreso").textContent = confianza + "%"
+        }
+    </script>
+</body>
+
+</html>
